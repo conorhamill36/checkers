@@ -71,8 +71,66 @@ def take_turn(player_name, board_df):
 
     #Function captures an enemy piece
     @func_name
-    def capture_piece():
-        return 0
+    def capture_piece(board_df, x, y, piece):
+        print("Piece from {}, {} is capturing".format(x, y))
+        print("Checking spaces in front")
+        #Need to include exceptions
+        #For piece x, can capture "below" and two squares left or right
+        if piece == 'x':
+            try:
+                board_df[x-2][y+2]
+            except:
+                print("Piece at the left edge of the board")
+                if board_df[x+1][y+1] == 'o' and board_df[x+2][y+2] == '':
+                    board_df[x+2][y+2] = piece
+                    board_df[x][y] = board_df[x+1][y+1] = ''
+            else:
+                try:
+                    board_df[x+2][y+2]
+                except:
+                    print("Piece at the right edge of the board")
+                    if board_df[x-1][y+1] == 'o' and board_df[x-2][y+2] == '':
+                        board_df[x-2][y+2] = piece
+                        board_df[x][y] = board_df[x-1][y+1] = ''
+                else:
+                    print("Piece is not at either edge of the board, random choice between left and right")
+                    if(random.randrange(1) == 0):
+                        board_df[x-2][y+2] = piece
+                        board_df[x][y] = board_df[x-1][y+1] = ''
+                    else:
+                        board_df[x+2][y+2] = piece
+                        board_df[x][y] = board_df[x+1][y+1] = ''
+
+        #For piece o, can capture pieces "above" and two squares left or right
+        if piece == 'o':
+            try:
+                board_df[x-2][y-2]
+            except:
+                print("Piece at the left edge of the board")
+                if board_df[x+1][y-1] == 'x' and board_df[x+2][y-2] == '':
+                    board_df[x+2][y-2] = piece
+                    board_df[x][y] = board_df[x+1][y-1] = ''
+
+            else:
+                try:
+                    board_df[x+2][y-2]
+                except:
+                    print("Piece at the right edge of the board")
+                    if board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == '':
+                        board_df[x-2][y-2] = piece
+                        board_df[x][y] = board_df[x-1][y-1] = ''
+                else:
+                    print("Piece is not at either edge of the board, random choice between left and right")
+                    if(random.randrange(1) == 0):
+                        print("Randomiser is capturing ")
+                        board_df[x-2][y-2] = piece
+                        board_df[x][y] = ''
+                        board_df[x-1][y-1] = ''
+                    else:
+                        board_df[x+2][y-2] = piece
+                        board_df[x][y] = ''
+                        board_df[x+1][y-1] = ''
+        return board_df
 
 
     #Function moves a piece to an empty space
@@ -144,32 +202,40 @@ def take_turn(player_name, board_df):
         print('Is player 2')
         piece = 'o'
 
+    #Locate all the pieces for a player
     loc_array = ch_func.find_pieces(board_df, piece)
     print(type(loc_array[0][0]))
 
     #Check if any pieces can be eaten
     capt_array = ch_func.can_be_eaten(board_df, loc_array, piece)
 
-    if not capt_array:
-        print("No capturable pieces found")
-    else:
-        print("Capturable pieces found at {}".format(capt_array))
-        print(board_df)
-
     #Check which pieces can move in to an empty space
     move_blank_array = ch_func.can_move_to_blank(board_df, loc_array, piece)
 
-    if not move_blank_array:
-        print("Not able to move to any empty spaces")
+    #Player will first capture a piece over moving to a blank space
+    if not capt_array:
+        print("No capturable pieces found by {}".format(player_name))
+        if not move_blank_array:
+            print("Not able to move to any empty spaces either. Passing to next player.")
+            return board_df
+        else:
+            print("Pieces at {} can move to empty spaces".format(move_blank_array))
+            print(board_df)
+            print("Executing function to move piece")
+            #Picking piece at random
+            random_piece = random.randrange(len(move_blank_array))
+            print("Length of array is {}, random piece is {}".format(len(move_blank_array), random_piece))
+            #time.sleep(3)
+            board_df = move_piece(board_df, move_blank_array[random_piece][0], move_blank_array[random_piece][1], piece)
     else:
-        print("Pieces at {} can move to empty spaces".format(move_blank_array))
+        print("Pieces that could capture found at {}".format(capt_array))
         print(board_df)
-        print("Executing function to move piece")
+        print("Executing function to capture piece")
         #Picking piece at random
-        random_piece = random.randrange(len(move_blank_array))
-        print("Length of array is {}, random piece is {}".format(len(move_blank_array), random_piece))
-        #time.sleep(3)
-        board_df = move_piece(board_df, move_blank_array[random_piece][0], move_blank_array[random_piece][1], piece)
+        random_piece = random.randrange(len(capt_array))
+        board_df = capture_piece(board_df, capt_array[random_piece][0], capt_array[random_piece][1], piece)
+
+
 
     print(board_df)
     print("{} has finished their turn".format(player_name))
@@ -196,7 +262,7 @@ def main():
     # player_name = 'Player 1'
     # board_df = take_turn(player_name, board_df)
     print(board_df)
-    for i in range(6):
+    for i in range(10):
         if(i%2 == 0):
             player_name = 'Player 1'
             board_df = take_turn(player_name, board_df)
