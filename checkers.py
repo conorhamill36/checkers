@@ -1,9 +1,12 @@
 #Program to simulate a game of checkers.
 #Initially between two simulated players making random choices (prioritising capturing opponents pieces), and then moving on to user input.
+#conor.hamill@ed.ac.uk
 
 #Importing modules
 import pandas as pd
 import numpy as np
+import random
+import time
 import checkers_functions as ch_func
 import checkers_decorators as ch_dec
 
@@ -17,6 +20,7 @@ def func_name(func):
     return wrapper
 
 #Function sets up board like a traditional game of checkers
+@ch_dec.dramatic_pause
 @func_name
 def set_up_board():
     print("Setting up board as traditional game of checkers")
@@ -56,6 +60,7 @@ def set_up_board():
     board_df = pd.DataFrame(board_array)
 
     print('\n\n{}\n\n'.format(board_df))
+    print("Board has been set up")
     return board_df
 
 
@@ -74,32 +79,60 @@ def take_turn(player_name, board_df):
     @func_name
     def move_piece(board_df, x, y, piece):
         print("Moving piece from {}, {}".format(x, y))
-
-        print("Checking space in front")
-
+        print("Checking spaces in front")
+        #Need to include exceptions
         #For piece x, can move "below" and one square left or right
         if piece == 'x':
-            if board_df[x+1][y+1] == '':
-                board_df[x+1][y+1] = piece
-                board_df[x][y] = ''
+            try:
+                board_df[x-1][y+1]
+            except:
+                print("Piece at the left edge of the board")
+                if board_df[x+1][y+1] == '':
+                    board_df[x+1][y+1] = piece
+                    board_df[x][y] = ''
             else:
-                board_df[x-1][y+1] = piece
-                board_df[x][y] = ''
-
-            #print(board_df)
+                try:
+                    board_df[x+1][y+1]
+                except:
+                    print("Piece at the right edge of the board")
+                    if board_df[x-1][y+1] == '':
+                        board_df[x-1][y+1] = piece
+                        board_df[x][y] = ''
+                else:
+                    print("Piece is not at either edge of the board, random choice between left and right")
+                    if(random.randrange(1) == 0):
+                        board_df[x-1][y+1] = piece
+                        board_df[x][y] = ''
+                    else:
+                        board_df[x+1][y+1] = piece
+                        board_df[x][y] = ''
         #For piece o, can move pieces "above" and one square left or right
         if piece == 'o':
-            if board_df[x+1][y-1] == '':
-                board_df[x+1][y-1] = piece
-                board_df[x][y] = ''
+            try:
+                board_df[x-1][y-1]
+            except:
+                print("Piece at the left edge of the board")
+                if board_df[x+1][y-1] == '':
+                    board_df[x+1][y-1] = piece
+                    board_df[x][y] = ''
+
             else:
-                board_df[x-1][y-1] = piece
-                board_df[x][y] = ''
-
+                try:
+                    board_df[x+1][y-1]
+                except:
+                    print("Piece at the right edge of the board")
+                    if board_df[x-1][y-1] == '':
+                        board_df[x-1][y-1] = piece
+                        board_df[x][y] = ''
+                else:
+                    print("Piece is not at either edge of the board, random choice between left and right")
+                    if(random.randrange(1) == 0):
+                        board_df[x-1][y-1] = piece
+                        board_df[x][y] = ''
+                    else:
+                        board_df[x+1][y-1] = piece
+                        board_df[x][y] = ''
         return board_df
-
-
-
 
 
 
@@ -132,19 +165,13 @@ def take_turn(player_name, board_df):
         print("Pieces at {} can move to empty spaces".format(move_blank_array))
         print(board_df)
         print("Executing function to move piece")
-        board_df = move_piece(board_df, move_blank_array[0][0], move_blank_array[0][1], piece)
+        #Picking piece at random
+        random_piece = random.randrange(len(move_blank_array))
+        print("Length of array is {}, random piece is {}".format(len(move_blank_array), random_piece))
+        #time.sleep(3)
+        board_df = move_piece(board_df, move_blank_array[random_piece][0], move_blank_array[random_piece][1], piece)
 
-
-
-
-
-    # print(board_df.get_loc(piece))
-    # print(board_df[board_df == piece].notnull())
-
-
-
-    #If not, then move a piece at random
-
+    print(board_df)
     print("{} has finished their turn".format(player_name))
     return board_df
 
@@ -162,13 +189,20 @@ def main():
 
 
     #Players take a turn, either capturing or moving
-    player_name = 'Player 1'
-    board_df = take_turn(player_name, board_df)
-    player_name = 'Player 2'
-    board_df = take_turn(player_name, board_df)
-    player_name = 'Player 1'
-    board_df = take_turn(player_name, board_df)
+    # player_name = 'Player 1'
+    # board_df = take_turn(player_name, board_df)
+    # player_name = 'Player 2'
+    # board_df = take_turn(player_name, board_df)
+    # player_name = 'Player 1'
+    # board_df = take_turn(player_name, board_df)
     print(board_df)
+    for i in range(6):
+        if(i%2 == 0):
+            player_name = 'Player 1'
+            board_df = take_turn(player_name, board_df)
+        if(i%2 == 1):
+            player_name = 'Player 2'
+            board_df = take_turn(player_name, board_df)
     #ch_func.print_goodbye() #testing importing functions
 
 
