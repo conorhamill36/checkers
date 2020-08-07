@@ -137,6 +137,7 @@ def can_move_to_blank(board_df, loc_array, piece):
 def can_be_eaten(board_df, loc_array, piece):
 
     #Function returns a boolean of whether can eat another piece or not
+    @ch_dec.dramatic_pause
     @ch_dec.func_name
     def can_be_eaten_boolean(board_df, x, y, piece):
         #Testing function for (1, 4)
@@ -147,34 +148,39 @@ def can_be_eaten(board_df, loc_array, piece):
 
         print("Checking if piece {} at position {}, {} can eat anything".format(piece, x, y))
         #For piece x, can eat pieces "below" and one square left or right
+        #Also need to check if the space on the other side of the captured piece is empty
         if piece == 'x':
+            print("Trying to capture to left first")
             try:
-                board_df[x-1][y+1]
+                board_df[x-2][y+2]
             except:
-                print("Piece at the left edge of the board")
-                if board_df[x+1][y+1] == 'o':
+                print("Piece near left edge of the board, so can't capture to left.\
+                \nTrying to capture to the right.")
+                if board_df[x+1][y+1] == 'o' and board_df[x+2][y+2] == '':
                     print("Can capture piece to the right")
                     cap_bool = 1
                 else:
                     print("Nothing can be captured for piece {} at {}, {}".format(piece, x, y))
                     cap_bool = 0
             else:
+                print("Now trying to capture to the right")
                 try:
-                    board_df[x+1][y+1]
+                    board_df[x+2][y+2]
                 except:
-                    print("Piece at the right edge of the board")
-                    if board_df[x-1][y+1] == 'o':
+                    print("Piece near right edge of the board, so can't capture to right.\
+                    \nTrying to capture to the left.")
+                    if board_df[x-1][y+1] == 'o' and board_df[x-2][y+2] == '':
                         print("Can capture piece to left")
                         cap_bool = 1
                     else:
                         print("Nothing can be captured for piece {} at {}, {}".format(piece, x, y))
                         cap_bool = 0
                 else:
-                    if board_df[x-1][y+1] == 'o':
+                    if board_df[x-1][y+1] == 'o' and board_df[x-2][y+2] == '':
                         print("Can capture piece to left")
                         cap_bool = 1
 
-                    elif board_df[x+1][y+1] == 'o':
+                    elif board_df[x+1][y+1] == 'o' and board_df[x+2][y+2] == '':
                         print("Can capture piece to the right")
                         cap_bool = 1
                     else:
@@ -183,10 +189,12 @@ def can_be_eaten(board_df, loc_array, piece):
 
         #For piece o, can eat pieces "above" and one square left or right
         if piece == 'o':
+            print("Trying to capture left first")
             try:
-                board_df[x-1][y-1]
+                board_df[x-2][y-2]
             except:
-                print("Piece at the left edge of the board")
+                print("Piece at the left edge of the board so can't capture to left.\
+                \nTrying to capture to the right.")
                 if board_df[x+1][y-1] == 'x':
                     print("Can capture piece to the right")
                     cap_bool = 1
@@ -198,18 +206,18 @@ def can_be_eaten(board_df, loc_array, piece):
                     board_df[x+1][y-1]
                 except:
                     print("Piece at the right edge of the board")
-                    if board_df[x-1][y-1] == 'x':
+                    if board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == '':
                         print("Can capture piece to left")
                         cap_bool = 1
                     else:
                         print("Nothing can be captured for piece {} at {}, {}".format(piece, x, y))
                         cap_bool = 0
                 else:
-                    if board_df[x-1][y-1] == 'x':
+                    if board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == '':
                         print("Can capture piece to left")
                         cap_bool = 1
 
-                    elif board_df[x+1][y-1] == 'x':
+                    elif board_df[x+1][y-1] == 'x' and board_df[x+2][y-2]:
                         print("Can capture piece to the right")
                         cap_bool = 1
 
