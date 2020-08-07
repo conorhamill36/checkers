@@ -1,5 +1,6 @@
 #Decorators to be used with checkers.py
 import time
+import os, sys
 
 #Decorator that simply prints the name of the function before and after executing
 def func_name(func):

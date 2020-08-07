@@ -10,6 +10,7 @@ def print_goodbye():
 
 #Function gets array of pieces on board
 @ch_dec.func_name
+@ch_dec.mute_printing
 def find_pieces(board_df, piece):
     print("Finds locations of pieces being used in the game")
     #Trying blunt force iterating method
@@ -29,7 +30,9 @@ def find_pieces(board_df, piece):
     return loc_array
 
 #Function gets array of pieces that can move to empty spaces
+@ch_dec.dramatic_pause
 @ch_dec.func_name
+@ch_dec.mute_printing
 def can_move_to_blank(board_df, loc_array, piece):
 
     #Function returns boolean of whether piece can move in to blank space or not
@@ -128,16 +131,20 @@ def can_move_to_blank(board_df, loc_array, piece):
             print("Piece at {}, {} can't move to blank square".format(loc_array[i][0], loc_array[i][1]))
     can_move_to_blank_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
 
-    print("Array of pieces that could move to blank places was found to be {}".format(move_blank_array))
+    if not move_blank_array:
+        print("No pieces found to more in to blank spaces")
+    else:
+        print("Array of pieces that could move to blank places was found to be {}".format(move_blank_array))
 
     return move_blank_array
 
 #Function gets array of pieces that can capture another piece
+@ch_dec.dramatic_pause
 @ch_dec.func_name
 def can_be_eaten(board_df, loc_array, piece):
 
     #Function returns a boolean of whether can eat another piece or not
-    @ch_dec.dramatic_pause
+    #@ch_dec.dramatic_pause
     @ch_dec.func_name
     def can_be_eaten_boolean(board_df, x, y, piece):
         #Testing function for (1, 4)
@@ -190,29 +197,35 @@ def can_be_eaten(board_df, loc_array, piece):
         #For piece o, can eat pieces "above" and one square left or right
         if piece == 'o':
             print("Trying to capture left first")
-            try:
+            try: #Testing edge of board to left
                 board_df[x-2][y-2]
             except:
                 print("Piece at the left edge of the board so can't capture to left.\
                 \nTrying to capture to the right.")
-                if board_df[x+1][y-1] == 'x':
+                if board_df[x+1][y-1] == 'x' and board_df[x+2][y-2] == '':
                     print("Can capture piece to the right")
                     cap_bool = 1
                 else:
+                    #Blocked by edge to left, nothing to capture to right
                     print("Nothing can be captured for piece {} at {}, {}".format(piece, x, y))
                     cap_bool = 0
             else:
-                try:
-                    board_df[x+1][y-1]
+                print("Now trying to capture to the right")
+                try: #Testing edge of board to right
+                    board_df[x+2][y-2]
                 except:
-                    print("Piece at the right edge of the board")
+                    print("Piece at the right edge of the board so can't capture to right.\
+                    \nTrying to capture to the left.")
                     if board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == '':
                         print("Can capture piece to left")
                         cap_bool = 1
                     else:
+                        #Blocked by edge to right, nothing to capture to left
                         print("Nothing can be captured for piece {} at {}, {}".format(piece, x, y))
                         cap_bool = 0
-                else:
+
+                else: #Edge not found on left or right
+                    print("Edge not found on left or right")
                     if board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == '':
                         print("Can capture piece to left")
                         cap_bool = 1
@@ -222,6 +235,7 @@ def can_be_eaten(board_df, loc_array, piece):
                         cap_bool = 1
 
                     else:
+                        #In centre of board, but no available pieces to capture
                         print("Nothing can be captured for piece {} at {}, {}".format(piece, x, y))
                         cap_bool = 0
 
@@ -232,6 +246,7 @@ def can_be_eaten(board_df, loc_array, piece):
 
     capt_array = []
 
+    #Going through location array and testing each piece
     for i in range(len(loc_array)):
 
         # print(loc_array[i])
@@ -244,6 +259,9 @@ def can_be_eaten(board_df, loc_array, piece):
             print("Piece at {}, {} can't capture anything".format(loc_array[i][0], loc_array[i][1]))
     can_be_eaten_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
 
-    print("Array of pieces that could capture was found to be {}".format(capt_array))
+    if not capt_array:
+        print("No pieces found to capture")
+    else:
+        print("Array of pieces that could capture was found to be {}".format(capt_array))
 
     return capt_array
