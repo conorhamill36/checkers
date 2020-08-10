@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import random
 import time
+import sys
 import checkers_functions as ch_func
 import checkers_decorators as ch_dec
 
@@ -262,7 +263,7 @@ def take_turn(player_name, board_df):
 
     #Locate all the pieces for a player
     loc_array = ch_func.find_pieces(board_df, piece)
-    print(type(loc_array[0][0]))
+    # print(type(loc_array[0][0]))
 
     #Check if any pieces can be eaten
     capt_array = ch_func.can_be_eaten(board_df, loc_array, piece)
@@ -275,6 +276,18 @@ def take_turn(player_name, board_df):
         print("No capturable pieces found by {}".format(player_name))
         if not move_blank_array:
             print("Not able to move to any empty spaces either. Passing to next player.")
+
+            try:
+                passing_to_next_player_flag
+            except:
+                passing_to_next_player_flag = 0
+
+            if(passing_to_next_player_flag == 1):
+                print("No one can move! It's a draw!")
+                print(board_df)
+                sys.exit()
+            passing_to_next_player_flag = 1
+
             return board_df
         else:
             print("Pieces at {} can move to empty spaces".format(move_blank_array))
@@ -285,6 +298,7 @@ def take_turn(player_name, board_df):
             print("Length of array is {}, random piece is {}".format(len(move_blank_array), random_piece))
             #time.sleep(3)
             board_df = move_piece(board_df, move_blank_array[random_piece][0], move_blank_array[random_piece][1], piece)
+            passing_to_next_player_flag = 0
     else:
         print("Pieces that could capture found at {}".format(capt_array))
         print(board_df)
@@ -293,7 +307,7 @@ def take_turn(player_name, board_df):
         random_piece = random.randrange(len(capt_array))
         board_df = capture_piece(board_df, capt_array[random_piece][0], capt_array[random_piece][1], piece)
         print("At end of {}, board is of type {}".format("take_turn", type(board_df)))
-
+        passing_to_next_player_flag = 0
 
     print(board_df)
     print("{} has finished their turn".format(player_name))
@@ -322,7 +336,7 @@ def main():
     print(board_df)
     #Opening file to output game history for debugging
     history_file = open('history_file.txt', 'w')
-    for i in range(50):
+    for i in range(500):
         if(i%2 == 0):
             player_name = 'Player 1'
             board_df = take_turn(player_name, board_df)
@@ -330,22 +344,42 @@ def main():
             player_name = 'Player 2'
             board_df = take_turn(player_name, board_df)
 
+
         print("Writing to history file")
         history_file.write("{} has finished turn:\n{}\n\n\n\n".format(player_name, board_df))
 
         #Counting number of each type of piece in the dataframe
         x_count = o_count = 0
+        x_count_flag = o_count_flag = 0
 
-        board_df.apply(pd.value_counts())
+        for j in range(len(board_df)):
+            if board_df[j].str.contains('x', regex=False).any():
+                print("Some x found in row {}".format(j))
+                x_count_flag = 1
 
+        for j in range(len(board_df)):
+            if board_df[j].str.contains('o', regex=False).any():
+                print("Some o found in row {}".format(j))
+                o_count_flag = 1
+
+        if(x_count_flag == 0):
+            print("x_count_flag is zero, player 2 wins!")
+            print(board_df)
+            sys.exit()
+
+        if(o_count_flag == 0):
+            print("o_count_flag is zero, player 1 wins!")
+            prtin(board_df)
+            sys.exit()
 
         # x_count = board_df.value_counts('x')
         # o_count = board_df.value_counts('o')
         # print("x_count: {}, o_count: {}".format(x_count, o_count))
+        print("End of turn number {}\nx_count_flag={}, o_count_flag={}\
+        ".format(i, x_count_flag, o_count_flag))
+        print(board_df)
+        print("Finishing turn number {}".format(i))
 
-
-
-    #ch_func.print_goodbye() #testing importing functions
 
     history_file.close()
 

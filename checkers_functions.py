@@ -44,9 +44,9 @@ def find_pieces(board_df, piece):
     return loc_array
 
 #Function gets array of pieces that can move to empty spaces
-#@ch_dec.dramatic_pause
 @ch_dec.func_name
-@ch_dec.mute_printing
+@ch_dec.dramatic_pause
+#@ch_dec.mute_printing
 def can_move_to_blank(board_df, loc_array, piece):
 
     #Function returns boolean of whether piece can move in to blank space or not
@@ -57,6 +57,11 @@ def can_move_to_blank(board_df, loc_array, piece):
             print("Checking if piece {} at position {}, {} can move".format(piece, x, y))
             #For piece x, can move "below" and one square left or right
             if piece == 'x':
+                if(y == 7):
+                    print("Piece is at the bottom of the board, can't move any more")
+                    move_blank_bool = 0
+                    return move_blank_bool
+
                 try:
                     board_df[x-1][y+1]
                 except:
@@ -79,6 +84,8 @@ def can_move_to_blank(board_df, loc_array, piece):
                             print("Cannot move to blank for piece {} at {}, {}".format(piece, x, y))
                             move_blank_bool = 0
                     else:
+                        print("board_df[x-1][y+1] is {} \nboard_df[x+1][y+1] is {} ".\
+                        format(board_df[x-1][y+1], board_df[x+1][y+1]))
                         if board_df[x-1][y+1] == '':
                             print("Can move to left")
                             move_blank_bool = 1
@@ -92,6 +99,10 @@ def can_move_to_blank(board_df, loc_array, piece):
 
             #For piece o, can move pieces "above" and one square left or right
             if piece == 'o':
+                if(y == 0):
+                    print("Piece is at the top of the board, can't move any more")
+                    move_blank_bool = 0
+                    return move_blank_bool
                 try:
                     board_df[x-1][y-1]
                 except:
@@ -143,10 +154,11 @@ def can_move_to_blank(board_df, loc_array, piece):
             move_blank_array.append(loc_array[i])
         else:
             print("Piece at {}, {} can't move to blank square".format(loc_array[i][0], loc_array[i][1]))
-    can_move_to_blank_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
+
+    # can_move_to_blank_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
 
     if not move_blank_array:
-        print("No pieces found to more in to blank spaces")
+        print("No pieces found to move in to blank spaces")
     else:
         print("Array of pieces that could move to blank places was found to be {}".format(move_blank_array))
 
@@ -154,12 +166,14 @@ def can_move_to_blank(board_df, loc_array, piece):
 
 #Function gets array of pieces that can capture another piece
 #@ch_dec.dramatic_pause
+
+@ch_dec.mute_printing
 @ch_dec.func_name
 def can_be_eaten(board_df, loc_array, piece):
 
     #Function returns a boolean of whether can eat another piece or not
     #@ch_dec.dramatic_pause
-    @ch_dec.func_name
+    #@ch_dec.func_name
     def can_be_eaten_boolean(board_df, x, y, piece):
         #Testing function for (1, 4)
         # x, y, piece = 1, 4, 'x'
@@ -171,6 +185,10 @@ def can_be_eaten(board_df, loc_array, piece):
         #For piece x, can eat pieces "below" and one square left or right
         #Also need to check if the space on the other side of the captured piece is empty
         if piece == 'x':
+            if(y > 5):
+                print("Piece is too far down the board, cannot capture anything")
+                cap_bool = 0
+                return cap_bool
             print("Trying to capture to left first")
             try:
                 board_df[x-2][y+2]
@@ -210,6 +228,11 @@ def can_be_eaten(board_df, loc_array, piece):
 
         #For piece o, can eat pieces "above" and one square left or right
         if piece == 'o':
+            if(y < 2):
+                print("Piece is too far up the board, cannot capture anything")
+                cap_bool = 0
+                return cap_bool
+
             print("Trying to capture left first")
             try: #Testing edge of board to left
                 board_df[x-2][y-2]
@@ -271,7 +294,7 @@ def can_be_eaten(board_df, loc_array, piece):
             capt_array.append(loc_array[i])
         else:
             print("Piece at {}, {} can't capture anything".format(loc_array[i][0], loc_array[i][1]))
-    can_be_eaten_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
+    # can_be_eaten_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
 
     if not capt_array:
         print("No pieces found to capture")
