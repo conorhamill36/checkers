@@ -20,7 +20,7 @@ def func_name(func):
     return wrapper
 
 #Function sets up board like a traditional game of checkers
-@ch_dec.dramatic_pause
+#@ch_dec.dramatic_pause
 @func_name
 def set_up_board():
     print("Setting up board as traditional game of checkers")
@@ -74,7 +74,6 @@ def take_turn(player_name, board_df):
     def capture_piece(board_df, x, y, piece):
         print("Piece from {}, {} is capturing".format(x, y))
         print("Checking spaces in front")
-        #Need to include exceptions
         #For piece x, can capture "below" and two squares left or right
         if piece == 'x':
             try:
@@ -82,24 +81,58 @@ def take_turn(player_name, board_df):
             except:
                 print("Piece at the left edge of the board")
                 if board_df[x+1][y+1] == 'o' and board_df[x+2][y+2] == '':
-                    board_df[x+2][y+2] = piece
-                    board_df[x][y] = board_df[x+1][y+1] = ''
+
+                    board_df = ch_func.execute_capture(x, y, \
+                    x+1, y+1, \
+                    x+2, y+2, \
+                    piece, board_df)
+
+                    # print("Piece at {}, is capturing piece at {} and landing at \
+                    # {}".format(board_df[x][y], board_df[x+1][y+1], board_df[x+2][y+2]))
+                    # board_df[x][y] = ''
+                    # board_df[x+1][y+1] = ''
+                    # board_df[x+2][y+2] = piece
             else:
                 try:
                     board_df[x+2][y+2]
                 except:
                     print("Piece at the right edge of the board")
                     if board_df[x-1][y+1] == 'o' and board_df[x-2][y+2] == '':
-                        board_df[x-2][y+2] = piece
-                        board_df[x][y] = board_df[x-1][y+1] = ''
+                        board_df = ch_func.execute_capture(x, y, \
+                        x-1, y+1, \
+                        x-2, y+2, \
+                        piece, board_df)
+
+                        # print("Piece at {}, is capturing piece at {} and landing at \
+                        # {}".format(board_df[x][y], board_df[x-1][y+1], board_df[x-2][y+2])
+                        # board_df[x][y] = ''
+                        # board_df[x-1][y+1] = ''
+                        # board_df[x-2][y+2] = piece
                 else:
                     print("Piece is not at either edge of the board, random choice between left and right")
-                    if(random.randrange(1) == 0):
-                        board_df[x-2][y+2] = piece
-                        board_df[x][y] = board_df[x-1][y+1] = ''
+                    if(random.randrange(1) == 0 and board_df[x-1][y+1] == 'o' and board_df[x-2][y+2] == ''):
+                        board_df = ch_func.execute_capture(x, y, \
+                        x-1, y+1, \
+                        x-2, y+2, \
+                        piece, board_df)
+
+
+                        # print("Trying capturing to the left")
+                        # board_df[x][y] = ''
+                        # board_df[x-1][y+1] = ''
+                        # board_df[x-2][y+2] = piece
                     else:
-                        board_df[x+2][y+2] = piece
-                        board_df[x][y] = board_df[x+1][y+1] = ''
+                        if(board_df[x+1][y+1] == 'o' and board_df[x+2][y+2] == ''):
+
+                            board_df = ch_func.execute_capture(x, y, \
+                            x+1, y+1, \
+                            x+2, y+2, \
+                            piece, board_df)
+
+                            # print("Trying capturing to the right")
+                            # board_df[x+2][y+2] = piece
+                            # board_df[x][y] = ''
+                            # board_df[x+1][y+1] = ''
 
         #For piece o, can capture pieces "above" and two squares left or right
         if piece == 'o':
@@ -108,8 +141,13 @@ def take_turn(player_name, board_df):
             except:
                 print("Piece at the left edge of the board")
                 if board_df[x+1][y-1] == 'x' and board_df[x+2][y-2] == '':
-                    board_df[x+2][y-2] = piece
-                    board_df[x][y] = board_df[x+1][y-1] = ''
+                    board_df = ch_func.execute_capture(x, y, \
+                    x+1, y-1, \
+                    x+2, y-2, \
+                    piece, board_df)
+
+                    # board_df[x+2][y-2] = piece
+                    # board_df[x][y] = board_df[x+1][y-1] = ''
 
             else:
                 try:
@@ -117,19 +155,38 @@ def take_turn(player_name, board_df):
                 except:
                     print("Piece at the right edge of the board")
                     if board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == '':
-                        board_df[x-2][y-2] = piece
-                        board_df[x][y] = board_df[x-1][y-1] = ''
+                        board_df = ch_func.execute_capture(x, y, \
+                        x-1, y-1, \
+                        x-2, y-2, \
+                        piece, board_df)
+
+                        # board_df[x-2][y-2] = piece
+                        # board_df[x][y] = board_df[x-1][y-1] = ''
                 else:
                     print("Piece is not at either edge of the board, random choice between left and right")
-                    if(random.randrange(1) == 0):
-                        print("Randomiser is capturing ")
-                        board_df[x-2][y-2] = piece
-                        board_df[x][y] = ''
-                        board_df[x-1][y-1] = ''
+                    if(random.randrange(1) == 0 and board_df[x-1][y-1] == 'x' and board_df[x-2][y-2] == ''):
+                        board_df = ch_func.execute_capture(x, y, \
+                        x-1, y-1, \
+                        x-2, y-2, \
+                        piece, board_df)
+
+                        # print("Trying to capture to the left")
+                        # board_df[x-2][y-2] = piece
+                        # board_df[x][y] = ''
+                        # board_df[x-1][y-1] = ''
                     else:
-                        board_df[x+2][y-2] = piece
-                        board_df[x][y] = ''
-                        board_df[x+1][y-1] = ''
+                        print("Trying to capture to the right")
+                        if(board_df[x+1][y-1] == 'x' and board_df[x+2][y-2] == ''):
+
+                            board_df = ch_func.execute_capture(x, y, \
+                            x+1, y+1, \
+                            x+2, y+2, \
+                            piece, board_df)
+
+                            # board_df[x+2][y-2] = piece
+                            # board_df[x][y] = ''
+                            # board_df[x+1][y-1] = ''
+        print("At end of function {}, board is of type {}".format("capture_piece()", type(board_df)))
         return board_df
 
 
@@ -158,10 +215,11 @@ def take_turn(player_name, board_df):
                         board_df[x][y] = ''
                 else:
                     print("Piece is not at either edge of the board, random choice between left and right")
-                    if(random.randrange(1) == 0):
+                    if(board_df[x][y] == piece and board_df[x-1][y+1] == ''):
                         board_df[x-1][y+1] = piece
                         board_df[x][y] = ''
-                    else:
+
+                    elif(board_df[x][y] == piece and board_df[x+1][y+1] == ''):
                         board_df[x+1][y+1] = piece
                         board_df[x][y] = ''
         #For piece o, can move pieces "above" and one square left or right
@@ -184,10 +242,10 @@ def take_turn(player_name, board_df):
                         board_df[x][y] = ''
                 else:
                     print("Piece is not at either edge of the board, random choice between left and right")
-                    if(random.randrange(1) == 0):
+                    if(board_df[x][y] == piece and board_df[x-1][y-1] == ''):
                         board_df[x-1][y-1] = piece
                         board_df[x][y] = ''
-                    else:
+                    elif(board_df[x][y] == piece and board_df[x+1][y-1] == ''):
                         board_df[x+1][y-1] = piece
                         board_df[x][y] = ''
         return board_df
@@ -234,7 +292,7 @@ def take_turn(player_name, board_df):
         #Picking piece at random
         random_piece = random.randrange(len(capt_array))
         board_df = capture_piece(board_df, capt_array[random_piece][0], capt_array[random_piece][1], piece)
-
+        print("At end of {}, board is of type {}".format("take_turn", type(board_df)))
 
 
     print(board_df)
@@ -262,15 +320,34 @@ def main():
     # player_name = 'Player 1'
     # board_df = take_turn(player_name, board_df)
     print(board_df)
-    for i in range(10):
+    #Opening file to output game history for debugging
+    history_file = open('history_file.txt', 'w')
+    for i in range(50):
         if(i%2 == 0):
             player_name = 'Player 1'
             board_df = take_turn(player_name, board_df)
         if(i%2 == 1):
             player_name = 'Player 2'
             board_df = take_turn(player_name, board_df)
+
+        print("Writing to history file")
+        history_file.write("{} has finished turn:\n{}\n\n\n\n".format(player_name, board_df))
+
+        #Counting number of each type of piece in the dataframe
+        x_count = o_count = 0
+
+        board_df.apply(pd.value_counts())
+
+
+        # x_count = board_df.value_counts('x')
+        # o_count = board_df.value_counts('o')
+        # print("x_count: {}, o_count: {}".format(x_count, o_count))
+
+
+
     #ch_func.print_goodbye() #testing importing functions
 
+    history_file.close()
 
 
 

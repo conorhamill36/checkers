@@ -6,7 +6,21 @@ def print_goodbye():
     return 0
 
 
+#Function takes co-ordinates as inputs and executes a capture of an enemy piece
+#@ch_dec.dramatic_pause
+@ch_dec.func_name
+def execute_capture(start_x, start_y, jump_x, jump_y, end_x, end_y, piece, board_df):
+    print("Piece {} at {},{}, is capturing piece at {},{} and landing at \
+    {},{}".format(piece, start_x, start_y, jump_x, jump_y, end_x, end_y))
 
+
+    board_df[start_x][start_y] = ''
+    board_df[jump_x][jump_y] = ''
+
+    board_df[end_x][end_y] = piece
+    print("After execution of capture, board looks like:\n{}\nand is of type {}".\
+    format(board_df, type(board_df)))
+    return board_df
 
 #Function gets array of pieces on board
 @ch_dec.func_name
@@ -30,7 +44,7 @@ def find_pieces(board_df, piece):
     return loc_array
 
 #Function gets array of pieces that can move to empty spaces
-@ch_dec.dramatic_pause
+#@ch_dec.dramatic_pause
 @ch_dec.func_name
 @ch_dec.mute_printing
 def can_move_to_blank(board_df, loc_array, piece):
@@ -139,7 +153,7 @@ def can_move_to_blank(board_df, loc_array, piece):
     return move_blank_array
 
 #Function gets array of pieces that can capture another piece
-@ch_dec.dramatic_pause
+#@ch_dec.dramatic_pause
 @ch_dec.func_name
 def can_be_eaten(board_df, loc_array, piece):
 
@@ -230,7 +244,7 @@ def can_be_eaten(board_df, loc_array, piece):
                         print("Can capture piece to left")
                         cap_bool = 1
 
-                    elif board_df[x+1][y-1] == 'x' and board_df[x+2][y-2]:
+                    elif board_df[x+1][y-1] == 'x' and board_df[x+2][y-2] =='':
                         print("Can capture piece to the right")
                         cap_bool = 1
 
