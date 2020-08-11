@@ -10,49 +10,64 @@ def print_goodbye():
 #@ch_dec.dramatic_pause
 @ch_dec.func_name
 def execute_capture(start_x, start_y, jump_x, jump_y, end_x, end_y, piece, board_df):
-    print("Piece {} at {},{}, is capturing piece at {},{} and landing at \
-    {},{}".format(piece, start_x, start_y, jump_x, jump_y, end_x, end_y))
+    print("Piece {} at {},{}, is capturing piece at {},{} and landing at {},{}\
+    ".format(piece, start_x, start_y, jump_x, jump_y, end_x, end_y))
 
 
     board_df[start_x][start_y] = ''
     board_df[jump_x][jump_y] = ''
-
     board_df[end_x][end_y] = piece
+
     print("After execution of capture, board looks like:\n{}\nand is of type {}".\
     format(board_df, type(board_df)))
     return board_df
 
 #Function gets array of pieces on board
 @ch_dec.func_name
+#@ch_dec.dramatic_pause
 @ch_dec.mute_printing
 def find_pieces(board_df, piece):
     print("Finds locations of pieces being used in the game")
+    print("Find pieces of type {}".format(piece))
+    print("Board is of length {}".format(len(board_df)))
     #Trying blunt force iterating method
-    print(board_df.head())
+    print(board_df)
     loc_array = []
     for i in range (8):
+        #Trying new method
+        print("Trying new method")
+
+        if(list(board_df[i][board_df[i]==piece].index != 0)):
+            print("For column {}, piece {} at row {}".format(i, piece,
+            list(board_df[i][board_df[i]==piece].index) ))
+        else:
+            print("New method hasn't found piece {} in column {}".format(piece, i))
+
         for j in range(8):
             # print(board_df[i])
             # print(type(board_df[i]))
             # print(board_df[i].index)
-            print(board_df[i][j])
+            #print(board_df[i][j])
             if(board_df[i][j] == piece):
                 print("Match at {}, {}".format(i, j))
                 loc_array.append((i, j))
+            else:
+                print("No match at {}, {}, square is: {}".format(i, j, board_df[i][j]))
             # print(Index(board_df[i]).get_loc('x'))
+    print("{} pieces of type {} found".format(len(loc_array), piece))
     print(loc_array)
+    print(board_df)
     return loc_array
 
 #Function gets array of pieces that can move to empty spaces
 @ch_dec.func_name
-@ch_dec.dramatic_pause
-#@ch_dec.mute_printing
+#@ch_dec.dramatic_pause
+@ch_dec.mute_printing
 def can_move_to_blank(board_df, loc_array, piece):
 
     #Function returns boolean of whether piece can move in to blank space or not
     @ch_dec.func_name
     def can_move_to_blank_boolean(board_df, x, y, piece):
-
 
             print("Checking if piece {} at position {}, {} can move".format(piece, x, y))
             #For piece x, can move "below" and one square left or right
@@ -142,18 +157,20 @@ def can_move_to_blank(board_df, loc_array, piece):
 
 
     print("Finding what pieces can move to an empty space")
+    print("Total of {} {} pieces on board".format(len(loc_array), piece))
 
     move_blank_array = []
     for i in range(len(loc_array)):
 
         # print(loc_array[i])
-        print(loc_array[i][0], loc_array[i][1])
-        print(board_df[loc_array[i][0]][loc_array[i][1]])
+        # print(loc_array[i][0], loc_array[i][1])
+        # print(board_df[loc_array[i][0]][loc_array[i][1]])
         if can_move_to_blank_boolean(board_df, loc_array[i][0], loc_array[i][1], piece) == 1:
-            print("Piece at {}, {} can move to a blank".format(loc_array[i][0], loc_array[i][1]))
+            print("For piece {} out of {}".format(i, len(loc_array)))
+            print("Piece {} at {}, {} can move to a blank".format(piece, loc_array[i][0], loc_array[i][1]))
             move_blank_array.append(loc_array[i])
         else:
-            print("Piece at {}, {} can't move to blank square".format(loc_array[i][0], loc_array[i][1]))
+            print("Piece {} at {}, {} can't move to blank square".format(piece, loc_array[i][0], loc_array[i][1]))
 
     # can_move_to_blank_boolean(board_df, loc_array[i][0], loc_array[i][1], piece)
 
@@ -166,7 +183,6 @@ def can_move_to_blank(board_df, loc_array, piece):
 
 #Function gets array of pieces that can capture another piece
 #@ch_dec.dramatic_pause
-
 @ch_dec.mute_printing
 @ch_dec.func_name
 def can_be_eaten(board_df, loc_array, piece):

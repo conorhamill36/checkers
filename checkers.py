@@ -11,18 +11,10 @@ import sys
 import checkers_functions as ch_func
 import checkers_decorators as ch_dec
 
-#Decorator that simply prints the name of the function before and after executing
-def func_name(func):
-    def wrapper(*args, **kwargs):
-        # print("\nFunction being called is {}\n".format(func.__name__))
-        value = func(*args, **kwargs)
-        # print("\nFunction that was called was {}\n".format(func.__name__))
-        return value
-    return wrapper
 
 #Function sets up board like a traditional game of checkers
-#@ch_dec.dramatic_pause
-@func_name
+@ch_dec.dramatic_pause
+@ch_dec.func_name
 def set_up_board():
     print("Setting up board as traditional game of checkers")
     #Adding x pieces by making np array of x pieces
@@ -67,11 +59,11 @@ def set_up_board():
 
 #Function executes a single turn for a player, returning the new board set up
 @ch_dec.dramatic_pause
-@func_name
+@ch_dec.func_name
 def take_turn(player_name, board_df, passing_to_next_player_flag):
 
     #Function captures an enemy piece
-    @func_name
+    @ch_dec.func_name
     def capture_piece(board_df, x, y, piece):
         print("Piece from {}, {} is capturing".format(x, y))
         print("Checking spaces in front")
@@ -180,8 +172,8 @@ def take_turn(player_name, board_df, passing_to_next_player_flag):
                         if(board_df[x+1][y-1] == 'x' and board_df[x+2][y-2] == ''):
 
                             board_df = ch_func.execute_capture(x, y, \
-                            x+1, y+1, \
-                            x+2, y+2, \
+                            x+1, y-1, \
+                            x+2, y-2, \
                             piece, board_df)
 
                             # board_df[x+2][y-2] = piece
@@ -192,7 +184,7 @@ def take_turn(player_name, board_df, passing_to_next_player_flag):
 
 
     #Function moves a piece to an empty space
-    @func_name
+    @ch_dec.func_name
     def move_piece(board_df, x, y, piece):
         print("Moving piece from {}, {}".format(x, y))
         print("Checking spaces in front")
@@ -244,11 +236,14 @@ def take_turn(player_name, board_df, passing_to_next_player_flag):
                 else:
                     print("Piece is not at either edge of the board, random choice between left and right")
                     if(board_df[x][y] == piece and board_df[x-1][y-1] == ''):
+                        print("Moving up and to the left")
                         board_df[x-1][y-1] = piece
                         board_df[x][y] = ''
                     elif(board_df[x][y] == piece and board_df[x+1][y-1] == ''):
+                        print("Moving up and to the right")
                         board_df[x+1][y-1] = piece
                         board_df[x][y] = ''
+        print("At end of move piece function, returning board")
         return board_df
 
 
@@ -318,7 +313,7 @@ def take_turn(player_name, board_df, passing_to_next_player_flag):
         passing_to_next_player_flag = 0
 
     print(board_df)
-    print("{} has finished their turn".format(player_name))
+    print("{} has finished their turn\n\n\n".format(player_name))
     return board_df, passing_to_next_player_flag
 
 
@@ -345,7 +340,7 @@ def main():
     #Opening file to output game history for debugging
     history_file = open('history_file.txt', 'w')
     passing_to_next_player_flag = 0
-    for i in range(1):
+    for i in range(300):
         if(i%2 == 0):
             player_name = 'Player 1'
             board_df, passing_to_next_player_flag = take_turn(player_name, board_df, passing_to_next_player_flag)

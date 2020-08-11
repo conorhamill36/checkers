@@ -19,7 +19,7 @@ def dramatic_pause(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         value = func(*args, **kwargs)
-        sleep_dur = 0
+        sleep_dur = 5
         print("Pausing for {} seconds...".format(sleep_dur))
         time.sleep(sleep_dur)
         return value
