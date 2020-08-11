@@ -68,7 +68,7 @@ def set_up_board():
 #Function executes a single turn for a player, returning the new board set up
 @ch_dec.dramatic_pause
 @func_name
-def take_turn(player_name, board_df):
+def take_turn(player_name, board_df, passing_to_next_player_flag):
 
     #Function captures an enemy piece
     @func_name
@@ -276,19 +276,27 @@ def take_turn(player_name, board_df):
         print("No capturable pieces found by {}".format(player_name))
         if not move_blank_array:
             print("Not able to move to any empty spaces either. Passing to next player.")
-
+            # print(passing_to_next_player_flag)
             try:
                 passing_to_next_player_flag
-            except:
+            except NameError:
+                print("Exception to passing_to_next_player_flag being called")
                 passing_to_next_player_flag = 0
+                return board_df, passing_to_next_player_flag
+            else:
+                if(passing_to_next_player_flag == None):
+                    passing_to_next_player_flag = 0
+                    print("passing_to_next_player_flag found as None, setting to ".format(passing_to_next_player_flag))
 
-            if(passing_to_next_player_flag == 1):
-                print("No one can move! It's a draw!")
-                print(board_df)
-                sys.exit()
-            passing_to_next_player_flag = 1
+                print("passing_to_next_player_flag is {}".format(passing_to_next_player_flag))
+                if(passing_to_next_player_flag == 1):
+                    print("No one can move! It's a draw!")
+                    print(board_df)
+                    sys.exit()
+                passing_to_next_player_flag = 1
+                print("passing_to_next_player_flag has been set to {}".format(passing_to_next_player_flag))
+                return board_df, passing_to_next_player_flag
 
-            return board_df
         else:
             print("Pieces at {} can move to empty spaces".format(move_blank_array))
             print(board_df)
@@ -311,7 +319,7 @@ def take_turn(player_name, board_df):
 
     print(board_df)
     print("{} has finished their turn".format(player_name))
-    return board_df
+    return board_df, passing_to_next_player_flag
 
 
 
@@ -336,13 +344,14 @@ def main():
     print(board_df)
     #Opening file to output game history for debugging
     history_file = open('history_file.txt', 'w')
-    for i in range(500):
+    passing_to_next_player_flag = 0
+    for i in range(1):
         if(i%2 == 0):
             player_name = 'Player 1'
-            board_df = take_turn(player_name, board_df)
+            board_df, passing_to_next_player_flag = take_turn(player_name, board_df, passing_to_next_player_flag)
         if(i%2 == 1):
             player_name = 'Player 2'
-            board_df = take_turn(player_name, board_df)
+            board_df, passing_to_next_player_flag = take_turn(player_name, board_df, passing_to_next_player_flag)
 
 
         print("Writing to history file")
@@ -360,6 +369,7 @@ def main():
         for j in range(len(board_df)):
             if board_df[j].str.contains('o', regex=False).any():
                 print("Some o found in row {}".format(j))
+                print(board_df[j])
                 o_count_flag = 1
 
         if(x_count_flag == 0):
@@ -369,7 +379,7 @@ def main():
 
         if(o_count_flag == 0):
             print("o_count_flag is zero, player 1 wins!")
-            prtin(board_df)
+            print(board_df)
             sys.exit()
 
         # x_count = board_df.value_counts('x')
@@ -378,7 +388,8 @@ def main():
         print("End of turn number {}\nx_count_flag={}, o_count_flag={}\
         ".format(i, x_count_flag, o_count_flag))
         print(board_df)
-        print("Finishing turn number {}".format(i))
+        print("Finishing turn number {}\n\n\n\n\n".format(i))
+        print("-------------------------------------\n\n\n\n\n\n\n")
 
 
     history_file.close()
