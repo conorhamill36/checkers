@@ -9,7 +9,7 @@ import random
 import time
 import sys
 import checkers_functions as ch_func
-import checkers_decorators as ch_dec
+import cbh_decorators as ch_dec
 
 
 #Function sets up board like a traditional game of checkers
